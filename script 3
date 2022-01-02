@@ -1,0 +1,14 @@
+ Import-Module ActiveDirectory  
+
+ $users = $null 
+ $i = 0 
+ $strCC = "G"
+ $strGRP = ("GroupName" + $strCC)
+
+ $users = Get-ADUser -SearchBase "ou=Filiale,dc=src-11,dc=ads" -filter {department -eq $strCC}  
+ ForEach($user in $users)  
+    {    
+      Add-ADGroupMember $strGRP -Members $user.DistinguishedName `
+        -ErrorAction SilentlyContinue
+      $i++  
+    }  
