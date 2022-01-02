@@ -1,0 +1,77 @@
+Import-Module activedirectory
+
+$root= 'ou=Filiale,dc=src-11,dc=ads'
+$RootOU = @(
+    "Services",
+    "Production",
+    "Recherche",
+    "Ventes"
+)
+Foreach ($o in $RootOU) {
+if(Test-Path "AD:/OU=$o,$root")
+{
+write-host "$o exisits"
+}else{
+    New-ADOrganizationalUnit -Name $o -path $root -Verbose -ProtectedFromAccidentalDeletion $false
+}
+}
+$childService = 'ou=Services,ou=Filiale,dc=src-11,dc=ads'
+$service = @(
+    "Direction",
+    "Ressources Humaines",
+    "Comptabilité",
+    "Paye",
+    "Informatique"
+)
+foreach ($p in $service) {
+if(Test-Path "AD:/OU=$p,$childService")
+{
+write-host "$p exisits"
+}else{
+New-ADOrganizationalUnit -Name $p -path $childService -Verbose -ProtectedFromAccidentalDeletion $false
+}
+}
+$childProd = 'ou=Production,ou=Filiale,dc=src-11,dc=ads'
+$Prod = @(
+    "Usine",
+    "Logistique",
+    "Méthodes",
+    "Support"
+)
+foreach ($q in $Prod) {
+if(Test-Path "AD:/OU=$q,$childProd")
+{
+write-host "$q exisits"
+}else{
+New-ADOrganizationalUnit -Name $q -path $childProd -Verbose -ProtectedFromAccidentalDeletion $false
+}
+}
+$childRecherche = 'ou=Recherche,ou=Filiale,dc=src-11,dc=ads'
+$Recherche = @(
+    "Prospective",
+    "Développement",
+    "Assurance Qualité"
+)
+foreach ($r in $Recherche) {
+if(Test-Path "AD:/OU=$r,$childRecherche")
+{
+write-host "$r exisits"
+}else{
+New-ADOrganizationalUnit -Name $r -path $childRecherche -Verbose -ProtectedFromAccidentalDeletion $false
+}
+}
+$childVentes = 'ou=Ventes,ou=Filiale,dc=src-11,dc=ads'
+$ventes = @(
+"Commercial",
+"Avant-Vente",
+"Consulting"
+)
+foreach ($s in $ventes) {
+if(Test-Path "AD:/OU=$s,$childVentes")
+{
+write-host "$s exisits"
+}else{
+New-ADOrganizationalUnit -Name $s -path $childVentes -Verbose -ProtectedFromAccidentalDeletion $false
+}
+}
+
