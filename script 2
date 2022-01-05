@@ -1,0 +1,79 @@
+$AddUserToAD = Import-Csv "C:\test.txt"
+
+
+foreach ($User in $AddUserToAD) {
+    switch ($User.department){
+        {$user.department -gt 200} {
+                                  Switch -Regex ($User.office) {
+                                           'Direction' { $ou = "OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                           'Ressources Humaines' {$ou = "OU=Services,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Comptabilité' {$ou = "OU=Services,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Paye' {$ou = "OU=Services,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Informatique'{$ou= "OU=Services,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           'Usine' {$ou= "OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Logistique'{$ou= "OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Méthodes'{$ou= "OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Support'{$ou= "OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           'Prospective'{$ou= "OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Développement'{$ou= "OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Assurance Qualité'{$ou= "OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           'Commercial'{$ou= "OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Avant-Vente'{$ou= "OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Consulting'{$ou= "OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           default {Write-Output -InputObject "Le Cadre supérieur n'a pas été déplacé"; break}
+
+                                           }
+                                        }
+        {$user.department -lt 200} {
+                                  Switch -Regex ($user.office) {
+                                           'Direction' { $ou = "OU=Direction,OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                           'Ressources Humaines'{ $ou = "OU=Ressources Humaines,OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                           'Comptabilité'{ $ou = "OU=Comptabilité,OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                           'Paye' { $ou = "OU=Paye,OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                           'Informatique'{ $ou = "OU=Informatique,OU=Services,OU=Filiale,DC=cheikh,DC=local" }
+                                            
+                                           'Usine' {$ou= "OU=Usine,OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Logistique'{$ou= "OU=Logistique,OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Méthodes'{$ou= "OU=Méthodes,OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Support'{$ou= "OU=Support,OU=Production,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           'Prospective'{$ou= "OU=Prospective,OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Développement'{$ou= "OU=Développement,OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Assurance Qualité'{$ou= "OU=Assurance Qualité,OU=Recherche,OU=Filiale,DC=cheikh,DC=local"}
+
+                                           'Commercial'{$ou= "OU=Commercial,OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Avant-Vente'{$ou= "OU=Avant-Vente,OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+                                           'Consulting'{$ou= "OU=Consulting,OU=Ventes,OU=Filiale,DC=cheikh,DC=local"}
+                                           default {Write-Output -InputObject "$user.firstname n'ont pas été déplacé"; break}
+                                           }
+                                          }
+                                        }
+                                    
+                                         
+
+    $Attributes = @{
+        Enabled               = $true
+        ChangePasswordAtLogon = $true
+        Name                  = $User.Firstname + " " + $User.Lastname
+        EmployeeID            = $User.Department
+        EmailAddress           = $user.firstname+"."+$user.lastname+"**"+"@filiale.com"
+        OfficePhone            = $User.field05
+        #Description           
+        SamAccountName = $user.firstname+$User.lastname.Substring(0,1)
+        Path                  = $ou    
+        AccountPassword       = “Pa55W0rd” | ConvertTo-SecureString -AsPlainText -Force
+    }
+
+   $name =  $user.firstname+$User.lastname.Substring(0,1)   
+   $Test = $(try {Get-ADUser $name} catch {$null})
+If ($Test -ne $Null) { 
+"$Name exists in AD" 
+} Else {
+    New-ADUser @Attributes }
+ 
+    }
+
