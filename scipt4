@@ -1,0 +1,28 @@
+$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name
+
+If ($CheckGroup)
+
+{ Write-Host $CheckGroup 'have already been created' -foregroundcolor Red }
+
+Else {
+
+
+Write-Host "Processing creation and adding users" -ForegroundColor Green
+Start-Sleep -Seconds 1
+New-ADGroup -Name "G-Filiale-Mailing" -SamAccountName  "G-Filiale-Mailing" -groupscope Global -GroupCategory Distribution  -Path "OU=Filiale,DC=src-11,DC=ads" -Description "Mailing Filiale" -Verbose
+New-ADGroup -Name "G-Managers-Mailing" -SamAccountName  "G-Managers-Mailing " -groupscope Global -GroupCategory Distribution  -Path "OU=Filiale,DC=src-11,DC=ads" -Description "Mailing Managers + Cadres sup" -Verbose
+New-ADGroup -Name "G-Dirigeants-Mailing" -SamAccountName  "G-Dirigeants-Mailing " -groupscope Global -GroupCategory Distribution  -Path "OU=Filiale,DC=src-11,DC=ads" -Description "Mailing Only Cadres sup" -Verbose
+
+}
+Get-Aduser -F * -SearchBase "OU=Filiale,DC=src-11,DC=ads" |
+
+foreach {
+
+Add-ADGroupMember  -identity "CN=G-filiale-Mailing,OU=Filiale,DC=src-11,DC=ads" -Members $_.distinguishedname -Verbose
+}
+
+Add-ADGroupMember -Identity "CN=G-Managers-Mailing,OU=Filiale,DC=src-11,DC=ads"  -Members (Get-ADUser -F { EmployeeID -ge 100 }) -Verbose
+Add-ADGroupMember -Identity  "CN=G-Dirigeants-Mailing,OU=Filiale,DC=src-11,DC=ads"  -Members (Get-ADUser -F { EmployeeID -ge 200}) -Verbose
+
+Start-Sleep -Seconds 1
+Write-Host "Everything was done" -ForegroundColor Yellow
