@@ -1,0 +1,30 @@
+$users  = Get-ADUser -SearchBase ‘OU=Services,OU=Filiale,DC=src-11,DC=ads’ -Filter * -Properties * 
+$grp= Get-ADGroup -SearchBase "OU=Ventes,OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel -f * 
+Foreach($group in $grp){
+Foreach ($user in $users) 
+{
+$members=Get-ADGroupMember -Identity $group -Recursive | Select -ExpandProperty SamAccountName
+If ($members -notcontains $user) 
+        { 
+         if ( $user.EmployeeID -ge 200 ) {
+        Add-ADGroupMember -Identity "G-Services" -Members $user -verbose }
+         if ($user.EmployeeID -lt 200 ) {
+
+        Add-ADGroupMember -Identity "G-Informatique" -Members (Get-ADUser -SearchBase ‘OU=Informatique,OU=Services,OU=Filiale,DC=src-11,DC=ads’ -Filter * )  -verbose
+         }
+        if ($user.EmployeeID -lt 200 ) {
+
+        Add-ADGroupMember -Identity "G-Direction" -Members (Get-ADUser -SearchBase ‘OU=Direction,OU=Services,OU=Filiale,DC=src-11,DC=ads’ -Filter * )  -verbose
+         }
+         if ($user.EmployeeID -lt 200 ) {
+
+        Add-ADGroupMember -Identity "G-Comptabilité" -Members (Get-ADUser -SearchBase ‘OU=Comptabilité,OU=Services,OU=Filiale,DC=src-11,DC=ads’ -Filter * )  -verbose
+         }
+         }
+         if ($user.EmployeeID -lt 200 ) {
+
+        Add-ADGroupMember -Identity "G-Paye" -Members (Get-ADUser -SearchBase ‘OU=Paye,OU=Services,OU=Filiale,DC=src-11,DC=ads’ -Filter * )  -verbose
+         }
+        }
+
+            }
