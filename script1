@@ -1,5 +1,5 @@
 Import-Module activedirectory
-
+### vérifie si l'OU existe et créer de manière récursive avec les variables de noms stockées au préalable ###
 $root= 'ou=Filiale,dc=src-11,dc=ads'  #dans cette variable l'on va stocker tout ce qui est de l'OU superieur
 $RootOU = @(
     "Services",
