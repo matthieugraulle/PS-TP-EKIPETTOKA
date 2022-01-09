@@ -1,4 +1,4 @@
-$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name
+$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name  #variable où sont stocker mais utilisateur qui cherche dans l' OU Filiale
 
 If ($CheckGroup)
 
