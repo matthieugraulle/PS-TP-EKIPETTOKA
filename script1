@@ -1,13 +1,13 @@
 Import-Module activedirectory
 
-$root= 'ou=Filiale,dc=src-11,dc=ads'
+$root= 'ou=Filiale,dc=src-11,dc=ads'  #dans cette variable l'on va stocker tout ce qui est de l'OU superieur
 $RootOU = @(
     "Services",
     "Production",
     "Recherche",
     "Ventes"
 )
-Foreach ($o in $RootOU) {
+Foreach ($o in $RootOU) {     #condition que si notre OU princiaple n'existe pas alors avec la commande New-ADOrganiszation créer le chemin sinon ecrire qu'elle existe
 if(Test-Path "AD:/OU=$o,$root")
 {
 write-host "$o exisits"
@@ -15,7 +15,7 @@ write-host "$o exisits"
     New-ADOrganizationalUnit -Name $o -path $root -Verbose -ProtectedFromAccidentalDeletion $false
 }
 }
-$childService = 'ou=Services,ou=Filiale,dc=src-11,dc=ads'
+$childService = 'ou=Services,ou=Filiale,dc=src-11,dc=ads' # comme la precedente OU nous allons créer L'OU secondaire dans L'OU principale
 $service = @(
     "Direction",
     "Ressources Humaines",
@@ -23,7 +23,7 @@ $service = @(
     "Paye",
     "Informatique"
 )
-foreach ($p in $service) {
+foreach ($p in $service) {           #condition que si notre OU secondaire n'existe pas alors avec la commande New-ADOrganiszation créer le chemin avec le chemin de l'ou principale sinon ecrire qu'elle existe               
 if(Test-Path "AD:/OU=$p,$childService")
 {
 write-host "$p exisits"
