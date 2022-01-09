@@ -1,6 +1,6 @@
-$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name  #variable où sont stocker mais utilisateur qui cherche dans l' OU Filiale
+$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name  #variable attribuée où sont stocker mais utilisateur qui cherche dans l' OU Filiale, searchScope onelevel nous permet de miter la recherche à cette première unité d'organisation donc Filiale
 
-If ($CheckGroup)
+If ($CheckGroup)  #condition si dans la variable checkgroupe 
 
 { Write-Host $CheckGroup 'have already been created' -foregroundcolor Red }
 
@@ -14,15 +14,15 @@ New-ADGroup -Name "G-Managers-Mailing" -SamAccountName  "G-Managers-Mailing " -g
 New-ADGroup -Name "G-Dirigeants-Mailing" -SamAccountName  "G-Dirigeants-Mailing " -groupscope Global -GroupCategory Distribution  -Path "OU=Filiale,DC=src-11,DC=ads" -Description "Mailing Only Cadres sup" -Verbose
 
 }
-Get-Aduser -F * -SearchBase "OU=Filiale,DC=src-11,DC=ads" |
+Get-Aduser -F * -SearchBase "OU=Filiale,DC=src-11,DC=ads" | #nous mettons des conditions en utilisant l'EmployeeID; tout d'abord nous utilisons distinguishename qui nous permet d'extraire les noms de UO filiale 
 
-foreach {
+foreach { # cette boucle permet de filter celon le distinguidesname qui appartient a l'UO principale, ainsi nous pouvons avec -ge mettre les membres dans leurs bonnes  UO.           
 
-Add-ADGroupMember  -identity "CN=G-filiale-Mailing,OU=Filiale,DC=src-11,DC=ads" -Members $_.distinguishedname -Verbose
+Add-ADGroupMember  -identity "CN=G-filiale-Mailing,OU=Filiale,DC=src-11,DC=ads" -Members $_.distinguishedname -Verbose  
 }
 
 Add-ADGroupMember -Identity "CN=G-Managers-Mailing,OU=Filiale,DC=src-11,DC=ads"  -Members (Get-ADUser -F { EmployeeID -ge 100 }) -Verbose
 Add-ADGroupMember -Identity  "CN=G-Dirigeants-Mailing,OU=Filiale,DC=src-11,DC=ads"  -Members (Get-ADUser -F { EmployeeID -ge 200}) -Verbose
 
-Start-Sleep -Seconds 1
+Start-Sleep -Seconds 1    #permet de suspendre l'activité dans un script ou une session pendant la période spécifiée de temps. 
 Write-Host "Everything was done" -ForegroundColor Yellow
