@@ -1,4 +1,4 @@
-$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name  #variable attribuée où sont stocker mais utilisateur qui cherche dans l' OU Filiale, searchScope onelevel nous permet de miter la recherche à cette première unité d'organisation donc Filiale
+$CheckGroup = Get-ADGroup -Filter * -SearchBase "OU=Filiale,DC=src-11,DC=ads" -SearchScope OneLevel | select Name  #variable attribuée où sont stocker mais utilisateur qui cherche dans l' OU Filiale, searchScope onelevel nous permet de filter la recherche à cette première unité d'organisation donc Filiale
 
 If ($CheckGroup)  #condition si dans la variable checkgroupe 
 
